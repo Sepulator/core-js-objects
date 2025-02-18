@@ -155,13 +155,25 @@ function makeWord(lettersObject) {
  *    sellTickets([25, 100]) => false (The seller does not have enough money to give change.)
  */
 function sellTickets(queue) {
-  let cash = 0;
+  const cash = { 25: 0, 50: 0 };
   const { length } = queue;
   for (let i = 0; i < length; i += 1) {
-    if (queue[i] === 25) cash += 25;
-    else cash -= queue[i] - 25;
+    if (queue[i] === 25) cash[25] += 25;
 
-    if (cash < 0) return false;
+    if (queue[i] === 50) {
+      if (cash[25] >= 25) cash[25] -= 25;
+      else return false;
+      cash[50] += 50;
+    }
+
+    if (queue[i] === 100) {
+      if (cash[50] >= 50 && cash[25] >= 25) {
+        cash[25] -= 25;
+        cash[50] -= 50;
+      } else if (cash[25] >= 75) {
+        cash[25] -= 75;
+      } else return false;
+    }
   }
 
   return true;
